@@ -1,4 +1,6 @@
-i18n = require 'i18n'
+i18n = require 'libs/i18n'
+Player = require 'objects/Player'
+ripple = require 'libs/ripple'
 
 function love.load()
   love.window.setTitle("Hello World")
@@ -7,15 +9,28 @@ function love.load()
   i18n.loadFile('i18n/en.lua')
 
   i18n.setLocale('fr')
-  
+  player = Player.new('John Doe', 100, 100, 100)
+  local source = love.audio.newSource('assets/sounds/main_grassland.mp3', 'static')
+  local sound = ripple.newSound(source, {
+    loop = true,
+  })
+  sound:play()
 end
 
 
 function love.update(dt)
   require("libs/lurker").update()
   require("libs/lovebird").update()
+
+
 end
 
 function love.draw()
-  
+  -- Display the player's name top left  corner
+  love.graphics.print(player.name, 10, 10)
+  -- Display the player's holdings top right corner
+  love.graphics.print(i18n('gold')..': '..player.currencies.gold, 700, 10)
+  love.graphics.print(i18n('materials')..': '..player.currencies.materials, 700, 30)
+  love.graphics.print(i18n('food')..': '..player.currencies.food, 700, 50)
+
 end
