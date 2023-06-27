@@ -6,4 +6,3 @@ that is a secret Lua Ecopolia dev
 - lurker : Hotswapping module
 - lume : set of functions for gamedev
 - lovebird : browser console for debbuging 127.0.0.1:8000
-- concord : Complete Entity Component System
