@@ -1,6 +1,7 @@
 i18n = require 'libs/i18n'
 Player = require 'objects/Player'
 ripple = require 'libs/ripple'
+lick = require "libs/lick"
 
 function love.load()
   love.window.setTitle("Hello World")
@@ -15,6 +16,7 @@ function love.load()
     loop = true,
   })
   sound:play()
+  print("load")
 end
 
 
