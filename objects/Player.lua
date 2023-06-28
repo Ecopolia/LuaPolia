@@ -10,9 +10,7 @@ function Player.new(name, initialGold, initialMaterials, initialFood)
       materials = initialMaterials or 0,
       food = initialFood or 0
     },
-    farmLevel = 1,
-    cityLevel = 1,
-    crops = {},
+    cells = {},
     buildings = {}
   }
 
@@ -38,24 +36,5 @@ function Player:getCurrency(currency)
   return self.currencies[currency]
 end
 
-function Player:upgradeFarm()
-  self.farmLevel = self.farmLevel + 1
-  -- Implement upgrade logic for the farm
-end
-
-function Player:upgradeCity()
-  self.cityLevel = self.cityLevel + 1
-  -- Implement upgrade logic for the city
-end
-
-function Player:addCrop(crop)
-  table.insert(self.crops, crop)
-  -- Implement logic for adding a crop to the player's inventory
-end
-
-function Player:addBuilding(building)
-  table.insert(self.buildings, building)
-  -- Implement logic for adding a building to the player's inventory
-end
 
 return Player

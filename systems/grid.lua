@@ -1,1 +1,1 @@
--- here will be defined the grid for the overworld
+-- here will be defined the grid 2dlist of cells for the overworld
