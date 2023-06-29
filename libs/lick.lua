@@ -4,7 +4,7 @@
 -- overwrites love.run, pressing all errors to the terminal/console
 
 local lick = {}
-lick.file = "../main.lua"
+lick.file = "main.lua"
 lick.debug = true
 lick.reset = true
 lick.clearFlag = false
