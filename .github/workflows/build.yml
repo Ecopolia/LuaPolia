@@ -70,8 +70,8 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v2
         with:
-          name: ecopolia-artifacts
-          path: downloaded-artifacts
+          name: ecopolia_macos-build
+          path: ecopolia_macos-build
 
       - name: Attach Artifacts
         uses: actions/upload-release-asset@v1
@@ -79,6 +79,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: downloaded-artifacts/
-          asset_name: ecopolia-artifacts
-          asset_content_type: application/octet-stream
+          asset_path: ecopolia_macos-build/
+          asset_name: ecopolia_macos-build.zip
+          asset_content_type: application/zip
