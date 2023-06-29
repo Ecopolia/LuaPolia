@@ -100,7 +100,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ecopolia_builds/macos
+          asset_path: ecopolia_builds/macos/ecopolia-macos.zip
           asset_name: ecopolia-macos.zip
           asset_content_type: application/zip
         
