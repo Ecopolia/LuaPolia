@@ -1,4 +1,4 @@
-name: Build all and Create Release
+# Build all and Create Release
 on:
   push:
     branches: [main]
@@ -25,79 +25,111 @@ jobs:
         with:
           name: ecopolia_macos-build
           path: ${{ steps.love-build.outputs.macos-filename }}
+        id: upload_macos
     
       - uses: actions/upload-artifact@v1
         with:
           name: ecopolia_win32-build
           path: ${{ steps.love-build.outputs.win32-filename }}
+        id: upload_win32
     
       - uses: actions/upload-artifact@v1
         with:
           name: ecopolia_win64-build
           path: ${{ steps.love-build.outputs.win64-filename }}
+        id: upload_win64
     
       - uses: actions/upload-artifact@v1
         with:
           name: ecopolia_love-build
           path: ${{ steps.love-build.outputs.love-filename }}
-    
-  # Create a release using the uploaded artifacts
+        id: upload_love
+
+  # Create a release
   create-release:
     needs: build-ecopolia
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Create Release
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      # Download the built artifacts
+      - name: Download macOS build
+        uses: actions/download-artifact@v1
+        with:
+          name: ecopolia_macos-build
+          path: ecopolia_builds/macos
+        
+      - name: Download Win32 build
+        uses: actions/download-artifact@v1
+        with:
+          name: ecopolia_win32-build
+          path: ecopolia_builds/win32
+        
+      - name: Download Win64 build
+        uses: actions/download-artifact@v1
+        with:
+          name: ecopolia_win64-build
+          path: ecopolia_builds/win64
+        
+      - name: Download Love build
+        uses: actions/download-artifact@v1
+        with:
+          name: ecopolia_love-build
+          path: ecopolia_builds/love
+
+      # Create a release
+      - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v1.0.0  # Replace with your desired tag name
-          release_name: Release 1.0.0  # Replace with your desired release name
+          tag_name: v1.0.0  # Specify the tag name for the release
+          release_name: Release v1.0.0  # Specify the name of the release
           body: |
             This is the release description.
-            You can add more details here.
+            You can provide more information about the release here.
           draft: false
           prerelease: false
-    
-      # Attach the uploaded artifacts to the release
-      - name: Attach Artifacts
-        id: attach_artifacts-macos
+      
+      # Upload the built artifacts as release assets
+      - name: Upload macOS build as release asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ needs.build-ecopolia.love-build.outputs.macos-filenamed }}
-          asset_name: ecopolia_macos-build
-    
-      - name: Attach Artifacts
-        id: attach_artifacts-win32
+          asset_path: ecopolia_builds/macos
+          asset_name: ecopolia-macos.zip
+          asset_content_type: application/zip
+        
+      - name: Upload Win32 build as release asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ needs.build-ecopolia.outputs.ecopolia_win32-build }}
-          asset_name: ecopolia_win32-build
-    
-      - name: Attach Artifacts
-        id: attach_artifacts-win64
+          asset_path: ecopolia_builds/win32
+          asset_name: ecopolia-win32.zip
+          asset_content_type: application/zip
+        
+      - name: Upload Win64 build as release asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ needs.build-ecopolia.outputs.ecopolia_win64-build }}
-          asset_name: ecopolia_win64-build
-    
-      - name: Attach Artifacts
-        id: attach_artifacts-love
+          asset_path: ecopolia_builds/win64
+          asset_name: ecopolia-win64.zip
+          asset_content_type: application/zip
+        
+      - name: Upload Love build as release asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ needs.build-ecopolia.outputs.ecopolia_love-build }}
-          asset_name: ecopolia_love-build
+          asset_path: ecopolia_builds/love
+          asset_name: ecopolia.love
+          asset_content_type: application/octet-stream
