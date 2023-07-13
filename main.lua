@@ -3,6 +3,10 @@ Player = require 'objects/Player'
 ripple = require 'libs/ripple'
 lick = require "libs/lick"
 
+local HexGrid = require 'systems/grid'
+  local grid = HexGrid.new(50)
+  grid:setSize(10, 10)
+
 function love.load()
   love.window.setTitle("Hello World")
   
@@ -15,8 +19,11 @@ function love.load()
   local sound = ripple.newSound(source, {
     loop = true,
   })
-  sound:play()
+  -- sound:play()
   print("load")
+  -- Usage example
+  
+
 end
 
 
@@ -34,5 +41,5 @@ function love.draw()
   love.graphics.print(i18n('gold')..': '..player.currencies.gold, 700, 10)
   love.graphics.print(i18n('materials')..': '..player.currencies.materials, 700, 30)
   love.graphics.print(i18n('food')..': '..player.currencies.food, 700, 50)
-
+  grid:draw()
 end
