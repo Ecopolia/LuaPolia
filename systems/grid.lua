@@ -36,9 +36,9 @@ function HexGrid:selectedHexagon()
   local col
 
   if row % 2 == 0 then
-    col = math.floor((self.mouseX - self.xOffset / 2) / self.xOffset)
+    col = math.floor((self.mouseX - self.xOffset / 2 - self.xOffset / 4) / self.xOffset)
   else
-    col = math.floor(self.mouseX / self.xOffset)
+    col = math.floor(self.mouseX / self.xOffset) - 1
   end
 
   if col >= 0 and col < self.columns and row >= 0 and row < self.rows then
@@ -62,7 +62,7 @@ function HexGrid:draw()
         love.graphics.setColor(1, 1, 1)  -- Set color to white for the selected hexagon
         love.graphics.polygon('fill', vertices)
       else
-        love.graphics.setColor(1, 1, 1)
+        love.graphics.setColor(1, 1, 1)  -- Set color to black for other hexagons
         love.graphics.polygon('line', vertices)
       end
     end
