@@ -30,8 +30,7 @@ end
 function love.update(dt)
   require("libs/lurker").update()
   require("libs/lovebird").update()
-
-
+  grid:updateCameraMovement(dt)
 end
 
 function love.draw()
@@ -44,6 +43,13 @@ function love.draw()
   grid:draw()
 end
 
+function love.keypressed(key)
+  grid.keysPressed[key] = true
+end
+
+function love.keyreleased(key)
+  grid.keysPressed[key] = false
+end
 function love.mousemoved(x, y)
   grid:updateMousePosition(x, y)
 end

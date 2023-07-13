@@ -1,3 +1,4 @@
+-- HexGrid object
 local HexGrid = {}
 
 function HexGrid.new(hexRadius)
@@ -10,7 +11,12 @@ function HexGrid.new(hexRadius)
     mouseX = 0,
     mouseY = 0,
     selectedRow = 0,
-    selectedCol = 0
+    selectedCol = 0,
+    camera = {
+      x = 0,
+      y = 0
+    },
+    keysPressed = {}
   }
   setmetatable(grid, { __index = HexGrid })
   return grid
@@ -37,14 +43,18 @@ function HexGrid:selectedHexagon()
   local centerX = love.graphics.getWidth() / 2 - gridWidth / 2
   local centerY = love.graphics.getHeight() / 2 - gridHeight / 2
 
-  -- Calculate the row and column of the selected hexagon based on the mouse position
-  local row = math.floor((self.mouseY - centerY - self.yOffset / 2) / self.yOffset)
+  -- Adjust mouse coordinates based on camera position
+  local mouseXAdjusted = self.mouseX + self.camera.x - centerX
+  local mouseYAdjusted = self.mouseY + self.camera.y - centerY
+
+  -- Calculate the row and column of the selected hexagon based on the adjusted mouse position
+  local row = math.floor((mouseYAdjusted - self.yOffset / 2) / self.yOffset)
   local col
 
   if row % 2 == 0 then
-    col = math.floor((self.mouseX - centerX - self.xOffset / 2 - self.xOffset / 4) / self.xOffset)
+    col = math.floor((mouseXAdjusted - self.xOffset / 2 - self.xOffset / 4) / self.xOffset)
   else
-    col = math.floor((self.mouseX - centerX) / self.xOffset) - 1
+    col = math.floor(mouseXAdjusted / self.xOffset) - 1
   end
 
   if col >= 0 and col < self.columns and row >= 0 and row < self.rows then
@@ -52,7 +62,6 @@ function HexGrid:selectedHexagon()
     self.selectedCol = col + 1
   end
 end
-
 
 function HexGrid:draw()
   -- Calculate the center position of the grid
@@ -63,11 +72,11 @@ function HexGrid:draw()
 
   for row = 1, self.rows do
     for col = 1, self.columns do
-      local x = centerX + col * self.xOffset
+      local x = centerX + col * self.xOffset - self.camera.x
       if row % 2 == 0 then
         x = x + self.xOffset / 2
       end
-      local y = centerY + row * self.yOffset
+      local y = centerY + row * self.yOffset - self.camera.y
 
       local vertices = self:calculateVertices(x, y)
 
@@ -82,6 +91,30 @@ function HexGrid:draw()
   end
 end
 
+-- Camera methods
+function HexGrid:moveCamera(dx, dy)
+  self.camera.x = self.camera.x + dx
+  self.camera.y = self.camera.y + dy
+end
+
+function HexGrid:updateCameraMovement(dt)
+  local moveSpeed = 200 -- Adjust the move speed as needed
+
+  if self.keysPressed["up"] then
+    self:moveCamera(0, -moveSpeed * dt)
+  end
+  if self.keysPressed["down"] then
+    self:moveCamera(0, moveSpeed * dt)
+  end
+  if self.keysPressed["left"] then
+    self:moveCamera(-moveSpeed * dt, 0)
+  end
+  if self.keysPressed["right"] then
+    self:moveCamera(moveSpeed * dt, 0)
+  end
+
+  self:selectedHexagon()
+end
 
 function HexGrid:calculateVertices(x, y)
   local vertices = {}
