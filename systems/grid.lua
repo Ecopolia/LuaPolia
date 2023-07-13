@@ -31,14 +31,20 @@ function HexGrid:selectedHexagon()
   self.selectedRow = 0
   self.selectedCol = 0
 
+  -- Calculate the center position of the grid
+  local gridWidth = self.columns * self.xOffset
+  local gridHeight = self.rows * self.yOffset
+  local centerX = love.graphics.getWidth() / 2 - gridWidth / 2
+  local centerY = love.graphics.getHeight() / 2 - gridHeight / 2
+
   -- Calculate the row and column of the selected hexagon based on the mouse position
-  local row = math.floor((self.mouseY - self.yOffset / 2) / self.yOffset)
+  local row = math.floor((self.mouseY - centerY - self.yOffset / 2) / self.yOffset)
   local col
 
   if row % 2 == 0 then
-    col = math.floor((self.mouseX - self.xOffset / 2 - self.xOffset / 4) / self.xOffset)
+    col = math.floor((self.mouseX - centerX - self.xOffset / 2 - self.xOffset / 4) / self.xOffset)
   else
-    col = math.floor(self.mouseX / self.xOffset) - 1
+    col = math.floor((self.mouseX - centerX) / self.xOffset) - 1
   end
 
   if col >= 0 and col < self.columns and row >= 0 and row < self.rows then
@@ -47,14 +53,21 @@ function HexGrid:selectedHexagon()
   end
 end
 
+
 function HexGrid:draw()
+  -- Calculate the center position of the grid
+  local gridWidth = self.columns * self.xOffset
+  local gridHeight = self.rows * self.yOffset
+  local centerX = love.graphics.getWidth() / 2 - gridWidth / 2
+  local centerY = love.graphics.getHeight() / 2 - gridHeight / 2
+
   for row = 1, self.rows do
     for col = 1, self.columns do
-      local x = col * self.xOffset
+      local x = centerX + col * self.xOffset
       if row % 2 == 0 then
         x = x + self.xOffset / 2
       end
-      local y = row * self.yOffset
+      local y = centerY + row * self.yOffset
 
       local vertices = self:calculateVertices(x, y)
 
@@ -68,6 +81,7 @@ function HexGrid:draw()
     end
   end
 end
+
 
 function HexGrid:calculateVertices(x, y)
   local vertices = {}

@@ -4,8 +4,8 @@ ripple = require 'libs/ripple'
 lick = require "libs/lick"
 
 local HexGrid = require 'systems/grid'
-  local grid = HexGrid.new(30)
-  grid:setSize(10, 10)
+  local grid = HexGrid.new(35)
+  grid:setSize(100, 100)
 
 function love.load()
   love.window.setTitle("Hello World")
@@ -36,11 +36,11 @@ end
 
 function love.draw()
   -- Display the player's name top left  corner
-  love.graphics.print(player.name, 10, 10)
-  -- Display the player's holdings top right corner
-  love.graphics.print(i18n('gold')..': '..player.currencies.gold, 700, 10)
-  love.graphics.print(i18n('materials')..': '..player.currencies.materials, 700, 30)
-  love.graphics.print(i18n('food')..': '..player.currencies.food, 700, 50)
+  -- love.graphics.print(player.name, 10, 10)
+  -- -- Display the player's holdings top right corner
+  -- love.graphics.print(i18n('gold')..': '..player.currencies.gold, 700, 10)
+  -- love.graphics.print(i18n('materials')..': '..player.currencies.materials, 700, 30)
+  -- love.graphics.print(i18n('food')..': '..player.currencies.food, 700, 50)
   grid:draw()
 end
 
