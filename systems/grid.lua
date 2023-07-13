@@ -1,4 +1,3 @@
--- HexGrid object
 local HexGrid = {}
 
 function HexGrid.new(hexRadius)
@@ -7,7 +6,11 @@ function HexGrid.new(hexRadius)
     xOffset = hexRadius * math.sqrt(3),
     yOffset = hexRadius * 1.5,
     rows = 0,
-    columns = 0
+    columns = 0,
+    mouseX = 0,
+    mouseY = 0,
+    selectedRow = 0,
+    selectedCol = 0
   }
   setmetatable(grid, { __index = HexGrid })
   return grid
@@ -16,6 +19,32 @@ end
 function HexGrid:setSize(rows, columns)
   self.rows = rows
   self.columns = columns
+end
+
+function HexGrid:updateMousePosition(x, y)
+  self.mouseX = x
+  self.mouseY = y
+  self:selectedHexagon()
+end
+
+function HexGrid:selectedHexagon()
+  self.selectedRow = 0
+  self.selectedCol = 0
+
+  -- Calculate the row and column of the selected hexagon based on the mouse position
+  local row = math.floor((self.mouseY - self.yOffset / 2) / self.yOffset)
+  local col
+
+  if row % 2 == 0 then
+    col = math.floor((self.mouseX - self.xOffset / 2) / self.xOffset)
+  else
+    col = math.floor(self.mouseX / self.xOffset)
+  end
+
+  if col >= 0 and col < self.columns and row >= 0 and row < self.rows then
+    self.selectedRow = row + 1
+    self.selectedCol = col + 1
+  end
 end
 
 function HexGrid:draw()
@@ -29,7 +58,13 @@ function HexGrid:draw()
 
       local vertices = self:calculateVertices(x, y)
 
-      love.graphics.polygon('line', vertices)
+      if row == self.selectedRow and col == self.selectedCol then
+        love.graphics.setColor(1, 1, 1)  -- Set color to white for the selected hexagon
+        love.graphics.polygon('fill', vertices)
+      else
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.polygon('line', vertices)
+      end
     end
   end
 end

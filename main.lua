@@ -4,7 +4,7 @@ ripple = require 'libs/ripple'
 lick = require "libs/lick"
 
 local HexGrid = require 'systems/grid'
-  local grid = HexGrid.new(50)
+  local grid = HexGrid.new(30)
   grid:setSize(10, 10)
 
 function love.load()
@@ -42,4 +42,8 @@ function love.draw()
   love.graphics.print(i18n('materials')..': '..player.currencies.materials, 700, 30)
   love.graphics.print(i18n('food')..': '..player.currencies.food, 700, 50)
   grid:draw()
+end
+
+function love.mousemoved(x, y)
+  grid:updateMousePosition(x, y)
 end
