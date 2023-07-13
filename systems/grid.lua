@@ -63,6 +63,18 @@ function HexGrid:selectedHexagon()
   end
 end
 
+function HexGrid:calculateVertices(x, y)
+  local vertices = {}
+  for i = 1, 6 do
+    local angle = (2 * math.pi / 6) * (i - 1) + math.pi / 6
+    local vertexX = x + self.hexRadius * math.cos(angle)
+    local vertexY = y + self.hexRadius * math.sin(angle)
+    table.insert(vertices, vertexX)
+    table.insert(vertices, vertexY)
+  end
+  return vertices
+end
+
 function HexGrid:draw()
   -- Calculate the center position of the grid
   local gridWidth = self.columns * self.xOffset
@@ -90,42 +102,43 @@ function HexGrid:draw()
     end
   end
 end
-
 -- Camera methods
 function HexGrid:moveCamera(dx, dy)
-  self.camera.x = self.camera.x + dx
-  self.camera.y = self.camera.y + dy
+  local gridWidth = self.columns * self.xOffset
+  local gridHeight = self.rows * self.yOffset
+  local screenWidth = love.graphics.getWidth()
+  local screenHeight = love.graphics.getHeight()
+
+  -- Calculate the maximum allowed camera movement based on the grid and screen sizes
+  local left = -(gridWidth - screenWidth) / 2
+  local top = -(gridHeight - screenHeight) / 2
+  
+  local right = -left + (2 * self.hexRadius)
+  local bot = -top + (2 * self.hexRadius)
+
+  -- Limit camera movement within the grid bounds
+  self.camera.x = math.max(left, math.min(right, self.camera.x + dx))
+  self.camera.y = math.max(top, math.min(bot, self.camera.y + dy))
 end
 
-function HexGrid:updateCameraMovement(dt)
-  local moveSpeed = 200 -- Adjust the move speed as needed
 
-  if self.keysPressed["up"] then
+function HexGrid:updateCameraMovement(dt)
+  local moveSpeed = 300 -- Adjust the move speed as needed
+
+  if (self.keysPressed["up"] or self.keysPressed["w"]) then
     self:moveCamera(0, -moveSpeed * dt)
   end
-  if self.keysPressed["down"] then
+  if (self.keysPressed["down"] or self.keysPressed["s"]) then
     self:moveCamera(0, moveSpeed * dt)
   end
-  if self.keysPressed["left"] then
+  if (self.keysPressed["left"] or self.keysPressed["a"]) then
     self:moveCamera(-moveSpeed * dt, 0)
   end
-  if self.keysPressed["right"] then
+  if (self.keysPressed["right"] or self.keysPressed["d"]) then
     self:moveCamera(moveSpeed * dt, 0)
   end
 
   self:selectedHexagon()
-end
-
-function HexGrid:calculateVertices(x, y)
-  local vertices = {}
-  for i = 1, 6 do
-    local angle = (2 * math.pi / 6) * (i - 1) + math.pi / 6
-    local vertexX = x + self.hexRadius * math.cos(angle)
-    local vertexY = y + self.hexRadius * math.sin(angle)
-    table.insert(vertices, vertexX)
-    table.insert(vertices, vertexY)
-  end
-  return vertices
 end
 
 return HexGrid
