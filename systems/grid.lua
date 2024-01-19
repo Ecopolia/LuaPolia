@@ -19,7 +19,9 @@ function HexGrid.new(hexRadius)
       y = 0
     },
     keysPressed = {},
-    isCameraEnabled = true
+    isCameraEnabled = true,
+    data = {},
+    dataReady = false
   }
   setmetatable(grid, { __index = HexGrid })
   return grid
@@ -33,6 +35,24 @@ end
 function HexGrid:setSpacing(xSpacing, ySpacing)
   self.xSpacing = xSpacing
   self.ySpacing = ySpacing
+end
+
+function HexGrid:setData(row, col, hexData)
+  local index = (row - 1) * self.columns + col
+  self.data[index] = hexData
+end
+
+function HexGrid:getData(row, col)
+  local index = (row - 1) * self.columns + col
+  return self.data[index]
+end
+
+function HexGrid:isDataReady()
+  return self.dataReady
+end
+
+function HexGrid:toggleDataReady(state)
+  self.dataReady = state or not self.dataReady
 end
 
 function HexGrid:updateMousePosition(x, y)
@@ -111,6 +131,17 @@ function HexGrid:draw()
         love.graphics.setColor(1, 1, 1)  -- Set color to black for other hexagons
         love.graphics.polygon('line', vertices)
       end
+
+      -- if data is ready, display the wheight of the hexagon
+      if self:isDataReady() then
+        -- Display data.wheight in the middle of the hexagon
+        hexData = self:getData(row, col)
+        
+        if hexData then
+          love.graphics.print(hexData.wheight, x - 10, y - 10)
+        end
+      end
+
     end
   end
 end

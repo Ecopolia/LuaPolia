@@ -4,10 +4,21 @@ ripple = require 'libs/ripple'
 lick = require "libs/lick"
 
 local HexGrid = require 'systems/grid'
-  local grid = HexGrid.new(35)
-  grid:setSize(5, 5)
-  grid:setSpacing(10, 10)
-  grid:toggleCameraMovement(false)
+local grid = HexGrid.new(35)
+grid:setSize(5, 5)
+grid:setSpacing(10, 10)
+grid:toggleCameraMovement(false)
+
+function initWheight()
+  grid:toggleDataReady(false)
+  for i = 1, grid.rows do
+    for j = 1, grid.columns do
+      grid:setData(i, j, { wheight = math.random(1, 6)})
+    end
+  end
+  grid:toggleDataReady(true)
+end
+
 
 function love.load()
   love.window.setTitle("LuaPolia")
@@ -16,6 +27,9 @@ function love.load()
   i18n.loadFile('i18n/en.lua')
 
   i18n.setLocale('fr')
+
+  initWheight()
+
   player = Player.new('John Doe', 100, 100, 100)
   local source = love.audio.newSource('assets/sounds/main_grassland.mp3', 'static')
   local sound = ripple.newSound(source, {
@@ -24,7 +38,6 @@ function love.load()
   -- sound:play()
   print("load")
   -- Usage example
-  
 
 end
 
