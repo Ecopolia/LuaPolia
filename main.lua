@@ -6,6 +6,8 @@ lick = require "libs/lick"
 local HexGrid = require 'systems/grid'
   local grid = HexGrid.new(35)
   grid:setSize(5, 5)
+  grid:setSpacing(10, 10)
+  grid:toggleCameraMovement(false)
 
 function love.load()
   love.window.setTitle("LuaPolia")

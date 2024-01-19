@@ -6,8 +6,8 @@ function HexGrid.new(hexRadius)
     hexRadius = hexRadius,
     xOffset = hexRadius * math.sqrt(3),
     yOffset = hexRadius * 1.5,
-    xSpacing = 10,
-    ySpacing = 10,
+    xSpacing = 0,
+    ySpacing = 0,
     rows = 0,
     columns = 0,
     mouseX = 0,
@@ -18,7 +18,8 @@ function HexGrid.new(hexRadius)
       x = 0,
       y = 0
     },
-    keysPressed = {}
+    keysPressed = {},
+    isCameraEnabled = true
   }
   setmetatable(grid, { __index = HexGrid })
   return grid
@@ -29,11 +30,6 @@ function HexGrid:setSize(rows, columns)
   self.columns = columns
 end
 
-/**
-* Set the spacing between hexagons
-* @param {number} xSpacing - The spacing between hexagons in the x direction
-* @param {number} ySpacing - The spacing between hexagons in the y direction
-*/
 function HexGrid:setSpacing(xSpacing, ySpacing)
   self.xSpacing = xSpacing
   self.ySpacing = ySpacing
@@ -122,6 +118,10 @@ end
 
 -- Camera methods
 function HexGrid:moveCamera(dx, dy)
+  if not self.isCameraEnabled then
+    return  -- Camera movement is disabled, do nothing
+  end
+
   local gridWidth = self.columns * self.xOffset
   local gridHeight = self.rows * self.yOffset
   local screenWidth = love.graphics.getWidth()
@@ -139,6 +139,10 @@ function HexGrid:moveCamera(dx, dy)
   self.camera.y = math.max(top, math.min(bot, self.camera.y + dy))
 end
 
+-- Method to toggle camera movement
+function HexGrid:toggleCameraMovement(state)
+  self.isCameraEnabled = state or not self.isCameraEnabled
+end
 
 function HexGrid:updateCameraMovement(dt)
   local moveSpeed = 300 -- Adjust the move speed as needed
