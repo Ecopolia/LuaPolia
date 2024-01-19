@@ -6,6 +6,8 @@ function HexGrid.new(hexRadius)
     hexRadius = hexRadius,
     xOffset = hexRadius * math.sqrt(3),
     yOffset = hexRadius * 1.5,
+    xSpacing = 10,
+    ySpacing = 10,
     rows = 0,
     columns = 0,
     mouseX = 0,
@@ -27,6 +29,16 @@ function HexGrid:setSize(rows, columns)
   self.columns = columns
 end
 
+/**
+* Set the spacing between hexagons
+* @param {number} xSpacing - The spacing between hexagons in the x direction
+* @param {number} ySpacing - The spacing between hexagons in the y direction
+*/
+function HexGrid:setSpacing(xSpacing, ySpacing)
+  self.xSpacing = xSpacing
+  self.ySpacing = ySpacing
+end
+
 function HexGrid:updateMousePosition(x, y)
   self.mouseX = x
   self.mouseY = y
@@ -38,8 +50,8 @@ function HexGrid:selectedHexagon()
   self.selectedCol = 0
 
   -- Calculate the center position of the grid
-  local gridWidth = self.columns * self.xOffset
-  local gridHeight = self.rows * self.yOffset
+  local gridWidth = self.columns * (self.xOffset + self.xSpacing)
+  local gridHeight = self.rows * (self.yOffset + self.ySpacing)
   local centerX = love.graphics.getWidth() / 2 - gridWidth / 2
   local centerY = love.graphics.getHeight() / 2 - gridHeight / 2
 
@@ -48,13 +60,13 @@ function HexGrid:selectedHexagon()
   local mouseYAdjusted = self.mouseY + self.camera.y - centerY
 
   -- Calculate the row and column of the selected hexagon based on the adjusted mouse position
-  local row = math.floor((mouseYAdjusted - self.yOffset / 2) / self.yOffset)
+  local row = math.floor((mouseYAdjusted - (self.yOffset + self.xSpacing) / 2) / (self.yOffset + self.ySpacing))
   local col
 
   if row % 2 == 0 then
-    col = math.floor((mouseXAdjusted - self.xOffset / 2 - self.xOffset / 4) / self.xOffset)
+    col = math.floor((mouseXAdjusted - (self.xOffset + self.xSpacing) / 2 - (self.xOffset + self.xSpacing) / 4) / (self.xOffset + self.xSpacing))
   else
-    col = math.floor(mouseXAdjusted / self.xOffset) - 1
+    col = math.floor(mouseXAdjusted / (self.xOffset + self.xSpacing)) - 1
   end
 
   if col >= 0 and col < self.columns and row >= 0 and row < self.rows then
@@ -62,6 +74,7 @@ function HexGrid:selectedHexagon()
     self.selectedCol = col + 1
   end
 end
+
 
 function HexGrid:calculateVertices(x, y)
   local vertices = {}
@@ -82,13 +95,16 @@ function HexGrid:draw()
   local centerX = love.graphics.getWidth() / 2 - gridWidth / 2
   local centerY = love.graphics.getHeight() / 2 - gridHeight / 2
 
+  local hexagonSpacingX = self.xSpacing  -- Adjust the spacing between hexagons in the x direction
+  local hexagonSpacingY = self.ySpacing  -- Adjust the spacing between hexagons in the y direction
+
   for row = 1, self.rows do
     for col = 1, self.columns do
-      local x = centerX + col * self.xOffset - self.camera.x
+      local x = centerX + col * (self.xOffset + hexagonSpacingX) - self.camera.x
       if row % 2 == 0 then
-        x = x + self.xOffset / 2
+        x = x + (self.xOffset + hexagonSpacingX) / 2
       end
-      local y = centerY + row * self.yOffset - self.camera.y
+      local y = centerY + row * (self.yOffset + hexagonSpacingY) - self.camera.y
 
       local vertices = self:calculateVertices(x, y)
 
@@ -102,6 +118,8 @@ function HexGrid:draw()
     end
   end
 end
+
+
 -- Camera methods
 function HexGrid:moveCamera(dx, dy)
   local gridWidth = self.columns * self.xOffset

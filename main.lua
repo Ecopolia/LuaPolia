@@ -5,10 +5,10 @@ lick = require "libs/lick"
 
 local HexGrid = require 'systems/grid'
   local grid = HexGrid.new(35)
-  grid:setSize(100, 100)
+  grid:setSize(5, 5)
 
 function love.load()
-  love.window.setTitle("Hello World")
+  love.window.setTitle("LuaPolia")
   
   i18n.loadFile('i18n/fr.lua')
   i18n.loadFile('i18n/en.lua')
